@@ -5,5 +5,8 @@ module.exports = function (app) {
 
   app.route('/api/check').post((req, res) => {});
 
-  app.route('/api/solve').post((req, res) => {});
+  app.route('/api/solve').post((req, res) => {
+    const { puzzle } = req.body;
+    res.json(solver.solve(puzzle));
+  });
 };
