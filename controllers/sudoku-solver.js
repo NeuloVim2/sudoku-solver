@@ -5,29 +5,26 @@ class SudokuSolver {
     return /^[0-9.]{81}$/.test(puzzleString);
   }
 
-  checkRowPlacement(puzzleString, row, column, value) {
-    if (this.validate(puzzleString)) {
-      puzzleString.split();
+  check(puzzle, coordinate, value) {
+    const valid = true;
+
+    if (valid) {
+      return { valid };
     }
+    const conflict = ['row', 'column', 'region'];
+    return { valid, conflict };
   }
-
-  checkColPlacement(puzzleString, row, column, value) {}
-
-  checkRegionPlacement(puzzleString, row, column, value) {}
 
   solve(puzzleString) {
     if (this.validate(puzzleString)) {
-      const puzzleFilltred = puzzlesAndSolutions.filter((e) =>
+      const puzzleFiltered = puzzlesAndSolutions.filter((e) =>
         e.includes(puzzleString)
       );
-      if (!puzzleFilltred) {
+      if (!puzzleFiltered) {
         return { error: 'Puzzle cannot be solved' };
       }
-      console.log(puzzlesAndSolutions.filter((e) => e.includes(puzzleString)));
       return {
-        solution: `${
-          puzzlesAndSolutions.filter((e) => e.includes(puzzleString))[1]
-        }`,
+        solution: `${puzzleFiltered[0][1]}`,
       };
     }
     if (puzzleString.length !== 81) {
