@@ -15,6 +15,7 @@ const invalidPuzzleString =
 
 suite('UnitTests', () => {
   test('Logic handles a valid puzzle string of 81 characters', () => {
+    solver.solveSudoku(validPuzzleString);
     assert.isTrue(
       solver.validate(validPuzzleString, 'puzzle string should be valid')
     );
