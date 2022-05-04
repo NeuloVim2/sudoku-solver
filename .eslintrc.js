@@ -6,12 +6,14 @@ module.exports = {
   },
   extends: ['airbnb-base', 'prettier', 'plugin:node/recommended'],
   parserOptions: {
+    sourceType: 'module',
     ecmaVersion: 13,
   },
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     'no-unused-vars': 'warn',
+    'no-param-reassign': 'off',
     'no-console': 'off',
     'func-names': 'off',
     'no-process-exit': 'off',
