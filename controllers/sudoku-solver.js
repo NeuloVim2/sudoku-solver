@@ -17,7 +17,7 @@ class SudokuSolver {
     return /^[0-9.]{81}$/.test(puzzleString);
   }
 
-  #solveUtil(board, n) {
+  solveUtil(board, n) {
     let row = -1;
     let col = -1;
     let isEmpty = true;
@@ -42,10 +42,10 @@ class SudokuSolver {
     }
 
     for (let num = 1; num <= n; num += 1) {
-      if (this.#checkIfNumIsSafe(board, row, col, num)) {
+      if (this.checkIfNumIsSafe(board, row, col, num)) {
         board[row][col] = num;
 
-        if (this.#solveUtil(board, n)) {
+        if (this.solveUtil(board, n)) {
           return true;
         }
         board[row][col] = 0;
@@ -54,7 +54,7 @@ class SudokuSolver {
     return false;
   }
 
-  #checkIfNumIsSafe(grid, row, col, num) {
+  checkIfNumIsSafe(grid, row, col, num) {
     // Row has the unique (row-clash)
     for (let d = 0; d < grid.length; d += 1) {
       // Check if the number we are trying to
@@ -158,41 +158,61 @@ class SudokuSolver {
       return { error: 'Required field(s) missing' };
     }
 
+    if (puzzle.length !== 81) {
+      return { error: 'Expected puzzle to be 81 characters long' };
+    }
+
+    if (!this.validate(puzzle)) {
+      return { error: 'Invalid characters in puzzle' };
+    }
+
+    if (!/^[A-I]{1}[1-9]{1}$/.test(coordinate)) {
+      return { error: 'Invalid coordinate' };
+    }
+
+    if (!/^[1-9]{1}$/.test(valueStr)) {
+      return { error: 'Invalid value' };
+    }
+
     const matrix = Util.stringToMatrix(puzzle);
     const row = coordToRow[`${coordinate.split('')[0]}`];
     const col = coordinate.split('')[1];
     const value = parseInt(valueStr, 10);
 
     const result = {
-      status: true,
+      valid: true,
       conflict: [],
     };
 
+    if (matrix[row - 1][col - 1]) {
+      return { valid: result.valid };
+    }
+
     if (!this.checkRow(matrix, row, col, value)) {
       result.conflict.push('row');
-      result.status = false;
+      result.valid = false;
     }
 
     if (!this.checkColumn(matrix, row, col, value)) {
-      result.conflict.push('col');
-      result.status = false;
+      result.conflict.push('column');
+      result.valid = false;
     }
 
     if (!this.checkRegion(matrix, row, col, value)) {
       result.conflict.push('region');
-      result.status = false;
+      result.valid = false;
     }
 
     if (result.conflict.length === 0) {
-      return { status: result.status };
+      return { valid: result.valid };
     }
-    return { status: result.status, conflict: result.conflict };
+    return { valid: result.valid, conflict: result.conflict };
   }
 
   solveSudoku(puzzleString) {
     if (this.validate(puzzleString)) {
       const matrix = Util.stringToMatrix(puzzleString);
-      if (this.#solveUtil(matrix, 9)) {
+      if (this.solveUtil(matrix, 9)) {
         const solution = matrix.map((e) => e.join('')).join('');
         return {
           solution: `${solution}`,
@@ -201,7 +221,7 @@ class SudokuSolver {
       return { error: 'Puzzle cannot be solved' };
     }
 
-    if (!puzzleString) return { error: 'Required field(s) missing' };
+    if (!puzzleString) return { error: 'Required field missing' };
 
     if (puzzleString.length !== 81) {
       return { error: 'Expected puzzle to be 81 characters long' };
